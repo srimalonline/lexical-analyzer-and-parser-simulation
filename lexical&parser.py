@@ -1,4 +1,6 @@
 import re
+import nltk
+from nltk import Tree
 
 # Define Token Types
 IDENTIFIER = 'IDENTIFIER'
@@ -145,7 +147,7 @@ def print_parse_tree(parse_tree, level=0):
 
 # Main Function
 def main():
-    file_name = 'input.txt'  # input strings file
+    file_name = 'ip3.txt'  # input strings file
     with open(file_name, 'r') as file:
         input_string = file.read()
 
@@ -196,10 +198,23 @@ def main():
         # Print the parse tree to the terminal
         print("\nParse Tree:")
         print_parse_tree(parse_tree)
+
+        # Convert the parse tree to an NLTK Tree
+        nltk_parse_tree = convert_to_nltk_tree(parse_tree)
+        nltk_parse_tree.pretty_print()
+        
         print("Input string can be accepted.")
     except ValueError as e:
         print("Error:", e)
         print("Input string cannot be accepted.")
 
+def convert_to_nltk_tree(parse_tree):
+    if isinstance(parse_tree, list):
+        root = Tree(parse_tree[0], [convert_to_nltk_tree(subtree) for subtree in parse_tree[1:]])
+        return root
+    else:
+        return parse_tree
+
 if __name__ == "__main__":
+    nltk.download('punkt')  # Download necessary resources for NLTK if not already downloaded
     main()
